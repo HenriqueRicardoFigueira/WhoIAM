@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"henrislip"
+	],
+	"copyright": "Copyright © 2019, henrislip",
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "client"
+}

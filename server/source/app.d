@@ -148,7 +148,7 @@ class palavrasChaves
 		int i = 0;
 		for (i = 0; i < tamo; i++)
 		{
-			if (this.comandos[i] == palavra)
+			if (comandos[i] == palavra)
 			{
 				return 1;
 			}
@@ -185,7 +185,7 @@ class palavrasChaves
 
 void main()
 {
-
+   
    auto listener = new Socket(AddressFamily.INET, SocketType.STREAM);
    listener.bind(new InternetAddress("localhost", 2525));
    listener.listen(10);
@@ -194,7 +194,8 @@ void main()
    char[1024] buffer;
    bool isRunning = true;
    Game game = new Game();
-   palavrasChaves palavrasChave;
+   
+   //palavrasChaves palavrasChave;
    while (isRunning)
    {
       readSet.reset();
@@ -213,11 +214,12 @@ void main()
                writeln (got, "TAMANHIM");
 
 
-               bool isreserved = false;
-               string copy = cast(string)buffer[0 .. (got-1)];
-               writeln (copy);
-               isreserved = palavrasChave.checaComandos((copy));
-               writeln (isreserved);
+               //bool isreserved = false;
+               //string copy = cast(string)buffer[0 .. buffer.length];
+               //writeln (copy);
+
+               //isreserved = palavrasChave.checaComandos( copy);
+               //writeln (isreserved);
 
                
                

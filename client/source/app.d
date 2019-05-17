@@ -53,22 +53,6 @@ final class Master{
     }
 }
 
-void manageGame(Socket socket, Player p1)
-{
-    
-    char[1024] buffer;
-    while(true)
-    {
-        auto resp = buffer[0 .. socket.receive(buffer)];
-        if( resp == "start")
-        {
-            break;
-        }
-        writeln(resp);
-    }
-}
-
-
 bool checaComandos(string palavra)
 	{
         string[] comandos = ["HELP","RULES", "TALKTOME", "QUIT", "/help", "/quit", "You are"];
@@ -97,6 +81,27 @@ bool checaComandos(string palavra)
 		}
 		return false;
 	}
+
+
+void manageGame(Socket socket, Player p1)
+{
+    char[1024] buffer;
+    bool seila = true;
+    writeln("xxxxxxxxxxxxxxxxxx");
+    while(seila)
+    {   
+        writeln("ssssssssssssssss");
+        auto resp = buffer[0 .. socket.receive(buffer)];
+        if( resp == "start")
+        {
+            seila = false;
+            break;
+        }
+        
+
+    }
+    writeln("sexo drogas e rock and roll");
+}
 
 void main() {
     char[] name;

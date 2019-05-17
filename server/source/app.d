@@ -64,7 +64,7 @@ final class Game
    Player[] players;
    string playerDaVez;
    string master;
-   string resposta;
+   char[] resposta;
 
    this()
    {
@@ -101,12 +101,12 @@ final class Game
       this.master = name;
    }
 
-   string getResposta()
+   char[] getResposta()
    {
       return resposta;
    }
 
-   void setResposta(string resp)
+   void setResposta(char[] resp)
    {
       this.resposta = resp;
    }
@@ -119,6 +119,16 @@ final class Game
    void setPlayerDaVez(string name)
    {
       this.playerDaVez = name;
+   }
+
+   bool checkWiner(char[] dica)
+   {
+      char[] resp = getResposta();
+      if(dica == resp)
+      {
+         return true;
+      }
+      return false;
    }
 
    int returnId(string name)
@@ -134,17 +144,22 @@ final class Game
    }
 }
 
+
+
 void main()
 {
 
    auto listener = new Socket(AddressFamily.INET, SocketType.STREAM);
-   listener.bind(new InternetAddress("localhost", 2525));
+   listener.bind(new InternetAddress("192.168.100.99", 8080));
    listener.listen(10);
    auto readSet = new SocketSet();
    Socket[] connectedClients;
    char[1024] buffer;
    bool isRunning = true;
    Game game = new Game();
+   char[200] pergunta;
+   int id = 1;
+   int mestre = 0;
    while (isRunning)
    {
       readSet.reset();
@@ -153,13 +168,15 @@ void main()
          readSet.add(client);
       if (Socket.select(readSet, null, null))
       {
+         /*
          foreach (client; connectedClients)
             if (readSet.isSet(client))
             {
                // read from it and echo it back
                auto got = client.receive(buffer);
                client.send(buffer[0 .. got]);
-            }
+               
+            }*/
          if (readSet.isSet(listener))
          {
             // the listener is ready to read, that means
@@ -176,15 +193,41 @@ void main()
                game.setPlayer(p1);
                game.setMaster(p1.getName());
                newSocket.send("true");
-               game.setResposta(cast(string)buffer[0 .. newSocket.receive(buffer)]);
+               game.setResposta(buffer[0 .. newSocket.receive(buffer)]);
                writeln(game.getResposta());
             }
             else{
                game.setPlayer(p1);
                p1.setIp(newSocket.remoteAddress().toAddrString());
                newSocket.send("Aguardando Jogadores");
+               if(connectedClients.length >= 2)
+               {
+                  newSocket.send("start");
+                  break;
+               }
             }
          }
       }
    }
+   Player[] list = game.getPlayers();
+   while(true)
+   {
+      connectedClients[id].send(list[id].getName());
+      connectedClients[id].receive(pergunta);
+      if(game.checkWiner(pergunta))
+      {
+         connectedClients[id].send(list[id].getName() ~ "ganhou");
+         break;
+      }
+      else{
+         connectedClients[mestre].send(pergunta);
+      }
+      if(id < connectedClients.length)
+         id++;
+      else{
+         id = 1;
+      } 
+   }
+   
+
 }

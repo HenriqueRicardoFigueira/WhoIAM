@@ -68,6 +68,36 @@ void manageGame(Socket socket, Player p1)
     }
 }
 
+
+bool checaComandos(string palavra)
+	{
+        string[] comandos = ["HELP","RULES", "TALKTOME", "QUIT", "/help", "/quit", "You are"];
+
+
+      //string novaparlabra = text(palavra[0 .. tam]);
+  
+		//função que checa se é uma palavra reservada
+		auto tamo = comandos.length;
+		int i = 0;
+		for (i = 0; i < tamo; i++)
+		{
+			if (comandos[i] == palavra)
+			{
+                if ("HELP" == palavra){
+                    string a = "> Para sair > QUIT | /quit \n> Para saber as regras >  RULES | /rules \n";
+		            writeln(a);
+                    return true;
+                }
+                else if("RULES" == palavra){
+                    string b = "> A regras sao simples: \n> Um fala de cada vez \n> Sempre que um player pergunta, eh vez do mestre responder \n> O mestre soh pode responder 'sim' ou 'nao' \n> Ganha quem acertar primeiro o personagem que o mestre eh \n> O mestre que comanda a sala e avisa quem ganha com o comando (GANHADOR player)";				
+		            writeln(b);
+                    return true;
+                }
+			}
+		}
+		return false;
+	}
+
 void main() {
     char[] name;
     auto socket = new Socket(AddressFamily.INET,  SocketType.STREAM);

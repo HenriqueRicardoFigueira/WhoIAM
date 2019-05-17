@@ -121,6 +121,17 @@ final class Game
       this.playerDaVez = name;
    }
 
+   int returnId(string name)
+   {
+      int id = 0;
+      foreach(Player p1 ; players)
+      {
+         if(name == p1.name)
+            break;
+         id++;
+      }
+      return id;
+   }
 }
 
 void main()
@@ -154,27 +165,24 @@ void main()
             // the listener is ready to read, that means
             // a new client wants to connect. We accept it here.
             auto newSocket = listener.accept();
-            newSocket.send("Hello!\n"); // say hello
+            newSocket.send("Hello mother fuck!\n"); // say hello
             connectedClients ~= newSocket; // add to our list
            
             Player p1 = new Player(cast(string)buffer[0 .. newSocket.receive(buffer)]);
             if (connectedClients.length == 1)
             {
                p1.setMaster(true);
-               p1.setIp(newSocket.hostName());
+               p1.setIp(newSocket.remoteAddress().toAddrString());
                game.setPlayer(p1);
                game.setMaster(p1.getName());
+               newSocket.send("true");
+               game.setResposta(cast(string)buffer[0 .. newSocket.receive(buffer)]);
+               writeln(game.getResposta());
             }
             else{
                game.setPlayer(p1);
                p1.setIp(newSocket.remoteAddress().toAddrString());
-            }
-            Player[] x = game.getPlayers();
-            foreach(px; x)
-            {
-               writeln(px.getName());
-               writeln(px.getMaster());
-               writeln(px.getIp());
+               newSocket.send("Aguardando Jogadores");
             }
          }
       }

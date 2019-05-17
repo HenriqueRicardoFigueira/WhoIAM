@@ -1,8 +1,7 @@
 module app;
 import std.socket;
 import std.stdio;
-import std.conv : text;
-import std.string;
+
 final class Player
 {
    string name;
@@ -122,70 +121,22 @@ final class Game
       this.playerDaVez = name;
    }
 
+   int returnId(string name)
+   {
+      int id = 0;
+      foreach(Player p1 ; players)
+      {
+         if(name == p1.name)
+            break;
+         id++;
+      }
+      return id;
+   }
 }
-
-
-
-class palavrasChaves
-{
-	string persona;
-	string[] comandos = ["HELP", "TALKTOME", "QUIT", "/help", "/quit", "You are"];
-
-	void setPersona(string palavra)
-	{
-		//inicializa a classe setando a persona
-		this.persona = palavra;
-	}
-
-	bool checaComandos(string palavra)
-	{
-
-
-      //string novaparlabra = text(palavra[0 .. tam]);
-  
-		//função que checa se é uma palavra reservada
-		auto tamo = comandos.length;
-		int i = 0;
-		for (i = 0; i < tamo; i++)
-		{
-			if (comandos[i] == palavra)
-			{
-				return 1;
-			}
-		}
-		return 0;
-	}
-
-	void comandoQuit()
-	{
-		//render!("index.dt");
-      return;
-	}
-
-	string comandoHelp()
-	{
-		string a = "> Para sair > QUIT | /quit \n				
-					> Para saber as regras >  RULES | /rules \n";
-		return a;
-	}
-	string comandoRules()
-	{
-		string a = "> A regras são simples: \n				
-					> Um fala de cada vez \n				
-					> Sempre que um player pergunta, é vez do mestre responder \n				
-					> O mestre só pode responder 'sim' ou 'nao' \n				
-					> Ganha quem acertar primeiro o personagem que o mestre é \n				
-					> O mestre que comanda a sala e avisa quem ganha com o comando (GANHADOR player)";				
-		return a;
-	}
-}
-
-
-
 
 void main()
 {
-   
+
    auto listener = new Socket(AddressFamily.INET, SocketType.STREAM);
    listener.bind(new InternetAddress("localhost", 2525));
    listener.listen(10);
@@ -194,35 +145,19 @@ void main()
    char[1024] buffer;
    bool isRunning = true;
    Game game = new Game();
-   
-   //palavrasChaves palavrasChave;
    while (isRunning)
    {
       readSet.reset();
       readSet.add(listener);
       foreach (client; connectedClients)
          readSet.add(client);
-      if (Socket.select(readSet, null, null))//conexao e config mestre
+      if (Socket.select(readSet, null, null))
       {
          foreach (client; connectedClients)
-            if (readSet.isSet(client))// Se cliente, fala
+            if (readSet.isSet(client))
             {
                // read from it and echo it back
                auto got = client.receive(buffer);
-
-
-               writeln (got, "TAMANHIM");
-
-
-               //bool isreserved = false;
-               //string copy = cast(string)buffer[0 .. buffer.length];
-               //writeln (copy);
-
-               //isreserved = palavrasChave.checaComandos( copy);
-               //writeln (isreserved);
-
-               
-               
                client.send(buffer[0 .. got]);
             }
          if (readSet.isSet(listener))
@@ -230,27 +165,24 @@ void main()
             // the listener is ready to read, that means
             // a new client wants to connect. We accept it here.
             auto newSocket = listener.accept();
-            newSocket.send("Hello!\n"); // say hello
+            newSocket.send("Hello mother fuck!\n"); // say hello
             connectedClients ~= newSocket; // add to our list
            
             Player p1 = new Player(cast(string)buffer[0 .. newSocket.receive(buffer)]);
             if (connectedClients.length == 1)
             {
                p1.setMaster(true);
-               p1.setIp(newSocket.hostName());
+               p1.setIp(newSocket.remoteAddress().toAddrString());
                game.setPlayer(p1);
                game.setMaster(p1.getName());
+               newSocket.send("true");
+               game.setResposta(cast(string)buffer[0 .. newSocket.receive(buffer)]);
+               writeln(game.getResposta());
             }
             else{
                game.setPlayer(p1);
                p1.setIp(newSocket.remoteAddress().toAddrString());
-            }
-            Player[] x = game.getPlayers();
-            foreach(px; x)
-            {
-               writeln(px.getName());
-               writeln(px.getMaster());
-               writeln(px.getIp());
+               newSocket.send("Aguardando Jogadores");
             }
          }
       }

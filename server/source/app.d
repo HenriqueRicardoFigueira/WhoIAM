@@ -1,7 +1,8 @@
 module app;
 import std.socket;
 import std.stdio;
-
+import std.conv : text;
+import std.string;
 final class Player
 {
    string name;
@@ -123,6 +124,65 @@ final class Game
 
 }
 
+
+
+class palavrasChaves
+{
+	string persona;
+	string[] comandos = ["HELP", "TALKTOME", "QUIT", "/help", "/quit", "You are"];
+
+	void setPersona(string palavra)
+	{
+		//inicializa a classe setando a persona
+		this.persona = palavra;
+	}
+
+	bool checaComandos(string palavra)
+	{
+
+
+      //string novaparlabra = text(palavra[0 .. tam]);
+  
+		//função que checa se é uma palavra reservada
+		auto tamo = comandos.length;
+		int i = 0;
+		for (i = 0; i < tamo; i++)
+		{
+			if (this.comandos[i] == palavra)
+			{
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	void comandoQuit()
+	{
+		//render!("index.dt");
+      return;
+	}
+
+	string comandoHelp()
+	{
+		string a = "> Para sair > QUIT | /quit \n				
+					> Para saber as regras >  RULES | /rules \n";
+		return a;
+	}
+	string comandoRules()
+	{
+		string a = "> A regras são simples: \n				
+					> Um fala de cada vez \n				
+					> Sempre que um player pergunta, é vez do mestre responder \n				
+					> O mestre só pode responder 'sim' ou 'nao' \n				
+					> Ganha quem acertar primeiro o personagem que o mestre é \n				
+					> O mestre que comanda a sala e avisa quem ganha com o comando (GANHADOR player)";				
+		return a;
+	}
+}
+
+
+
+
 void main()
 {
 
@@ -134,19 +194,33 @@ void main()
    char[1024] buffer;
    bool isRunning = true;
    Game game = new Game();
+   palavrasChaves palavrasChave;
    while (isRunning)
    {
       readSet.reset();
       readSet.add(listener);
       foreach (client; connectedClients)
          readSet.add(client);
-      if (Socket.select(readSet, null, null))
+      if (Socket.select(readSet, null, null))//conexao e config mestre
       {
          foreach (client; connectedClients)
-            if (readSet.isSet(client))
+            if (readSet.isSet(client))// Se cliente, fala
             {
                // read from it and echo it back
                auto got = client.receive(buffer);
+
+
+               writeln (got, "TAMANHIM");
+
+
+               bool isreserved = false;
+               string copy = cast(string)buffer[0 .. (got-1)];
+               writeln (copy);
+               isreserved = palavrasChave.checaComandos((copy));
+               writeln (isreserved);
+
+               
+               
                client.send(buffer[0 .. got]);
             }
          if (readSet.isSet(listener))

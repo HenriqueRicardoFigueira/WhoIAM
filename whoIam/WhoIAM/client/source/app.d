@@ -53,12 +53,27 @@ final class Master{
     }
 }
 
+void manageGame(Socket socket, Player p1)
+{
+    
+    char[1024] buffer;
+    while(true)
+    {
+        auto resp = buffer[0 .. socket.receive(buffer)];
+        if( resp == "start")
+        {
+            break;
+        }
+        writeln(resp);
+    }
+}
+
 void main() {
     char[] name;
     auto socket = new Socket(AddressFamily.INET,  SocketType.STREAM);
     char[1024] buffer;
     Master master = new Master;
-    socket.connect(new InternetAddress("localhost", 2525));
+    socket.connect(new InternetAddress("192.168.100.99", 8080));
     auto received = socket.receive(buffer); // wait for the server to say hello
     writeln("Server said: ", buffer[0 .. received]);
     writeln("Digite seu nick: ");
@@ -71,9 +86,9 @@ void main() {
         player.setMaster(true);
         master.setResposta();
         socket.send(master.getResposta());
-    }
-    
+        manageGame(socket, player);    
+    }    
     else{
-        writeln(resp);
+        manageGame(socket, player);
     }
 }

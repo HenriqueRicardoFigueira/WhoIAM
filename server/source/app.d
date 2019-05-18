@@ -203,8 +203,11 @@ void main()
                newSocket.send("Aguardando Jogadores");
                if(connectedClients.length >= 2)
                {
-                  foreach(clientss ; connectedClients)
+                  //newSocket.send("2 Jogadores entraram");
+                  foreach(clientss ; connectedClients){
+                     newSocket.send("start");
                      clientss.send("start");
+                  }
                   break;
                }
             }
@@ -227,9 +230,10 @@ void main()
          connectedClients[mestre].send(list[mestre].getName);
          connectedClients[mestre].receive(mestrep);
       }
-      if(id < ((connectedClients.length-1))) 
+      if(id < ((connectedClients.length)-1)) {
          id++;
-       else {
+      }
+      else {
          id = 1;
       } 
    }

@@ -83,33 +83,89 @@ bool checaComandos(string palavra)
 	}
 
 
+
 void manageGame(Socket socket, Player p1)
 {
     char[1024] buffer;
     bool seila = true;
-    char[] pergunta;
-    writeln("xxxxxxxxxxxxxxxxxx");
+    writeln("player entrou");
+    auto resp = buffer[0 .. socket.receive(buffer)];
     while(seila)
     {   
-        writeln("ssssssssssssssss");
-        auto resp = buffer[0 .. socket.receive(buffer)];
-        if( resp == "start")
+        writeln("DIGITE: start");
+        //writeln(resp);
+        //resp = buffer[0 .. socket.receive(buffer)];
+        readln(resp);
+        
+        socket.send(buffer[0 .. socket.receive(buffer)]);
+        if(resp == "start")
         {
+            resp = null;
+            writeln("loop do mestre");
             seila = false;
+            //break;
+            //goto ali;
+        }
+        writeln("loop");
+        break;
+
+    }
+    //auto resp = buffer[0 .. socket.receive(buffer)];
+    //ali:
+    if (!p1.getMaster){
+        char[] pergunta;
+
+        while(true){
+            readln(resp);
+            if(resp.length > 1){
+                socket.send(resp); 
+            }
+            
+            resp = buffer[0 .. socket.receive(buffer)];
+            if(p1.getName()){
+                writeln("Faça uma pergunta ou uma tentativa");
+                readln(pergunta);
+                socket.send(pergunta);
+            }else{
+                writeln("Ainda não é sua vez");
+            }  
+        }   
+    }
+    else{
+        char[] pergunta;
+        while (true){
+           write(".");
+        
         }
         
 
+        }
     }
-    auto x = buffer[0 .. socket.receive(buffer)];
-    writeln(x);
-    if(x == p1.getName())
-    {
-        writeln("Faça uma pergunta ou uma tentativa");
-        readln(pergunta);
-        socket.send(pergunta);
-    }
-    else{
-        writeln("Ainda não é sua vez");
+
+
+
+void getChat(Socket socket, Player p1){
+    char[1024] buffer;
+    char[1024] tempbuffer;
+    writeln("Aaaa getchat");
+    char[] pergunta;
+    tempbuffer = buffer[0 .. socket.receive(buffer)];
+
+    while(true){
+
+        if (tempbuffer != buffer){
+            tempbuffer = buffer[0 .. socket.receive(buffer)];
+            auto x = buffer[0 .. socket.receive(buffer)];
+            writeln(x);
+            if(x == p1.getName()){
+                writeln("Faça uma pergunta ou uma tentativa");
+                readln(pergunta);
+                socket.send(pergunta);
+            }else{
+                writeln("Ainda não é sua vez");
+            }  
+        }
+ 
     }
 }
 

@@ -87,6 +87,7 @@ void manageGame(Socket socket, Player p1)
 {
     char[1024] buffer;
     bool seila = true;
+    char[] pergunta;
     writeln("xxxxxxxxxxxxxxxxxx");
     while(seila)
     {   
@@ -95,12 +96,21 @@ void manageGame(Socket socket, Player p1)
         if( resp == "start")
         {
             seila = false;
-            break;
         }
         
 
     }
-    writeln("sexo drogas e rock and roll");
+    auto x = buffer[0 .. socket.receive(buffer)];
+    writeln(x);
+    if(x == p1.getName())
+    {
+        writeln("Faça uma pergunta ou uma tentativa");
+        readln(pergunta);
+        socket.send(pergunta);
+    }
+    else{
+        writeln("Ainda não é sua vez");
+    }
 }
 
 void main() {
@@ -108,7 +118,7 @@ void main() {
     auto socket = new Socket(AddressFamily.INET,  SocketType.STREAM);
     char[1024] buffer;
     Master master = new Master;
-    socket.connect(new InternetAddress("192.168.100.99", 8080));
+    socket.connect(new InternetAddress("localhost", 8080));
     auto received = socket.receive(buffer); // wait for the server to say hello
     writeln("Server said: ", buffer[0 .. received]);
     writeln("Digite seu nick: ");

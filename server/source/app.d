@@ -150,7 +150,7 @@ void main()
 {
 
    auto listener = new Socket(AddressFamily.INET, SocketType.STREAM);
-   listener.bind(new InternetAddress("192.168.100.99", 8080));
+   listener.bind(new InternetAddress("localhost", 8080));
    listener.listen(10);
    auto readSet = new SocketSet();
    Socket[] connectedClients;
@@ -158,6 +158,7 @@ void main()
    bool isRunning = true;
    Game game = new Game();
    char[200] pergunta;
+   char[200] mestrep;
    int id = 1;
    int mestre = 0;
    while (isRunning)
@@ -202,7 +203,8 @@ void main()
                newSocket.send("Aguardando Jogadores");
                if(connectedClients.length >= 2)
                {
-                  newSocket.send("start");
+                  foreach(clientss ; connectedClients)
+                     clientss.send("start");
                   break;
                }
             }
@@ -212,19 +214,22 @@ void main()
    Player[] list = game.getPlayers();
    while(true)
    {
+      writeln("server");
+      writeln(id);
       connectedClients[id].send(list[id].getName());
       connectedClients[id].receive(pergunta);
-      if(game.checkWiner(pergunta))
+      if(game.checkWiner(pergunta) == true)
       {
          connectedClients[id].send(list[id].getName() ~ "ganhou");
          break;
       }
       else{
-         connectedClients[mestre].send(pergunta);
+         connectedClients[mestre].send(list[mestre].getName);
+         connectedClients[mestre].receive(mestrep);
       }
-      if(id < connectedClients.length)
+      if(id < ((connectedClients.length-1))) 
          id++;
-      else{
+       else {
          id = 1;
       } 
    }

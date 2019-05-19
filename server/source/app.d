@@ -221,6 +221,7 @@ void main()
       writeln(id);
       connectedClients[id].send(list[id].getName());
       connectedClients[id].receive(pergunta);
+      connectedClients[id].send(pergunta);
       if(game.checkWiner(pergunta) == true)
       {
          connectedClients[id].send(list[id].getName() ~ "ganhou");
@@ -228,7 +229,12 @@ void main()
       }
       else{
          connectedClients[mestre].send(list[mestre].getName);
-         connectedClients[mestre].receive(mestrep);
+         mestrep = "..";
+         while(mestrep == ".."){
+            connectedClients[mestre].receive(mestrep);
+            write(".");
+         }
+         connectedClients[id].send(mestrep);
       }
       if(id < ((connectedClients.length)-1)) {
          id++;

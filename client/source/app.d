@@ -105,9 +105,11 @@ void manageGame(Socket socket, Player p1)
             seila = false;
             //break;
             //goto ali;
+            break;
         }
+        seila = false;
         writeln("loop");
-        break;
+        
 
     }
     //auto resp = buffer[0 .. socket.receive(buffer)];
@@ -116,25 +118,37 @@ void manageGame(Socket socket, Player p1)
         char[] pergunta;
 
         while(true){
-            readln(resp);
-            if(resp.length > 1){
-                socket.send(resp); 
-            }
+            //readln(resp);
+
             
-            resp = buffer[0 .. socket.receive(buffer)];
+            pergunta = buffer[0 .. socket.receive(buffer)];
             if(p1.getName()){
                 writeln("Faça uma pergunta ou uma tentativa");
                 readln(pergunta);
-                socket.send(pergunta);
+                if(pergunta.length > 1){
+                    socket.send(pergunta); 
+                }
+                //socket.send(pergunta);
             }else{
                 writeln("Ainda não é sua vez");
             }  
         }   
     }
     else{
-        char[] pergunta;
+        char[] pergunto;
+        auto ancora = buffer[0 .. socket.receive(buffer)];
         while (true){
-           write(".");
+            
+            write(buffer[0 .. socket.receive(buffer)]);
+            //auto anc = buffer[0 .. socket.receive(buffer)];
+            writeln("responda sim ou nao.");
+            readln(pergunto);
+            
+            if(pergunto == "sim"){
+                socket.send("sim");
+            }else{
+                socket.send("nao");
+            }
         
         }
         

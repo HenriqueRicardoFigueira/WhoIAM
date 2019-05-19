@@ -246,7 +246,7 @@ void main()
          foreach(clientss ; connectedClients){
             
 
-            clientss.send("\n>> Pergunta" ~ pergunta ~ "\n >>Resposta do mestre =  " ~ mestrep );
+            clientss.send("\n>> Pergunta >>\n  " ~ pergunta ~ "\n >>Resposta do mestre =  " ~ mestrep );
             //clientss.send("Resposta do mestre" ~ mestrep);
          }
       }

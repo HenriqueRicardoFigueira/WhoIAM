@@ -224,16 +224,18 @@ void main()
       
    
          // PEDE A PERGUNTA AO PLAYER DA VEZ
-      connectedClients[id].send(list[id].getName());
-      connectedClients[id].receive(pergunta);
+      connectedClients[id].sendTo(list[id].getName());
+      connectedClients[id].receiveFrom(pergunta);
+      //connectedClients[mestre].sendTo(pergunta);
       foreach(clientss ; connectedClients){
-         clientss.send("Pergunta" ~ pergunta ~ "> do player - > "~ list[id].getName() );
+         clientss.sendTo("Pergunta" ~ pergunta ~ "> do player - > "~ list[id].getName() );
+         
       }
       // CHECA SE EH A RESPOSTA CERTA 
       if(game.checkWiner(pergunta) == true)
       {
          foreach(clientss ; connectedClients){
-         clientss.send(pergunta);
+            clientss.send(pergunta);
          }
          connectedClients[id].send(list[id].getName() ~ "ganhou");
          break;
@@ -241,11 +243,12 @@ void main()
       else{
 
          connectedClients[mestre].send(pergunta);
-
          connectedClients[mestre].receive(mestrep);
          foreach(clientss ; connectedClients){
-            clientss.send("Pergunta" ~ pergunta ~ "> do player - > "~ list[id].getName() );
-            clientss.send("Resposta do mestre" ~ mestrep);
+            
+
+            clientss.send(">>Pergunta" ~ pergunta ~ ">>Resposta do mestre =  " ~ mestrep );
+            //clientss.send("Resposta do mestre" ~ mestrep);
          }
       }
       if(id < ((connectedClients.length)-1)) {

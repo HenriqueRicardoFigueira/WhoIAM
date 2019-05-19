@@ -93,10 +93,13 @@ void manageGame(Socket socket, Player p1)
     char[] resposta;
     auto resp = buffer[0 .. socket.receive(buffer)];
     if(p1.getMaster){
-        while(true){
-            if(socket.receive(buffer)){
-                socket.receive(buffer);
-                writeln(buffer);
+        while(true)
+        {
+            //resposta = '       ';
+            
+            if(socket.receive(resp)){
+                socket.receive(resp);
+                writeln(resp);
                 writeln("Responda sim ou nao");
                 readln(resposta);
                 socket.send(resposta);
@@ -107,12 +110,15 @@ void manageGame(Socket socket, Player p1)
         while (true)
         {
             
-           
+            //resposta = '       ';
+            //bea = '      ';
             writeln("Faça uma pergunta ",p1.getName," :");
             readln(resposta);
             socket.send(resposta);
-            socket.receive(bea);
-            writeln(bea);
+            if(socket.receive(bea)){
+                socket.receive(bea);
+                writeln(bea);
+            }
         }
     }
 

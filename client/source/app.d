@@ -96,7 +96,7 @@ void manageGame(Socket socket, Player p1)
         //writeln(resp);
         //resp = buffer[0 .. socket.receive(buffer)];
         readln(resp);
-        
+        /*
         socket.send(buffer[0 .. socket.receive(buffer)]);
         if(resp == "start")
         {
@@ -107,8 +107,9 @@ void manageGame(Socket socket, Player p1)
             //goto ali;
             break;
         }
-        seila = false;
+        seila = false;*/
         writeln("loop");
+        break;
         
 
     }
@@ -116,15 +117,17 @@ void manageGame(Socket socket, Player p1)
     //ali:
     if (!p1.getMaster){
         char[] pergunta;
-
+        writeln("loop player");
         while(true){
             //readln(resp);
 
             
-            pergunta = buffer[0 .. socket.receive(buffer)];
+            
             if(p1.getName()){
                 writeln("Faça uma pergunta ou uma tentativa");
+                
                 readln(pergunta);
+
                 if(pergunta.length > 1){
                     socket.send(pergunta); 
                 }
@@ -135,11 +138,16 @@ void manageGame(Socket socket, Player p1)
         }   
     }
     else{
+
+        writeln("loop mestre");
         char[] pergunto;
+        char[] acn;
         auto ancora = buffer[0 .. socket.receive(buffer)];
         while (true){
-            
-            write(buffer[0 .. socket.receive(buffer)]);
+            ancora = null;
+            socket.receive(ancora);
+        
+            write(ancora);
             //auto anc = buffer[0 .. socket.receive(buffer)];
             writeln("responda sim ou nao.");
             readln(pergunto);
@@ -149,7 +157,12 @@ void manageGame(Socket socket, Player p1)
             }else{
                 socket.send("nao");
             }
-        
+
+            while(ancora == acn){
+                socket.receive(acn);
+            }
+            
+
         }
         
 

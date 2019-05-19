@@ -228,12 +228,9 @@ void main()
          break;
       }
       else{
-         connectedClients[mestre].send(list[mestre].getName);
-         mestrep = "..";
-         while(mestrep == ".."){
-            connectedClients[mestre].receive(mestrep);
-            write(".");
-         }
+         writeln("envia pergunta pro mestre e pega a resposta");
+         connectedClients[mestre].send(pergunta);
+         connectedClients[mestre].receive(mestrep);
          connectedClients[id].send(mestrep);
       }
       if(id < ((connectedClients.length)-1)) {

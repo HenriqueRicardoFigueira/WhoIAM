@@ -217,28 +217,43 @@ void main()
    Player[] list = game.getPlayers();
    while(true)
    {
+     //LOOP SERVER FEEDBACK
       writeln("server");
-      writeln(id);
+      writeln(list.length);
+      ////////////
+      
+   
+         // PEDE A PERGUNTA AO PLAYER DA VEZ
       connectedClients[id].send(list[id].getName());
       connectedClients[id].receive(pergunta);
-      connectedClients[id].send(pergunta);
+      foreach(clientss ; connectedClients){
+         clientss.send("Pergunta" ~ pergunta ~ "> do player - > "~ list[id].getName() );
+      }
+      // CHECA SE EH A RESPOSTA CERTA 
       if(game.checkWiner(pergunta) == true)
       {
+         foreach(clientss ; connectedClients){
+         clientss.send(pergunta);
+         }
          connectedClients[id].send(list[id].getName() ~ "ganhou");
          break;
       }
       else{
-         writeln("envia pergunta pro mestre e pega a resposta");
+
          connectedClients[mestre].send(pergunta);
+
          connectedClients[mestre].receive(mestrep);
-         connectedClients[id].send(mestrep);
+         foreach(clientss ; connectedClients){
+            clientss.send("Pergunta" ~ pergunta ~ "> do player - > "~ list[id].getName() );
+            clientss.send("Resposta do mestre" ~ mestrep);
+         }
       }
       if(id < ((connectedClients.length)-1)) {
          id++;
       }
       else {
          id = 1;
-      } 
+      }
    }
    
 

@@ -87,86 +87,35 @@ bool checaComandos(string palavra)
 void manageGame(Socket socket, Player p1)
 {
     char[1024] buffer;
+    char[1024] bea;
     bool seila = true;
     writeln("player entrou");
+    char[] resposta;
     auto resp = buffer[0 .. socket.receive(buffer)];
-    while(seila)
-    {   
-        writeln("DIGITE: start");
-        //writeln(resp);
-        //resp = buffer[0 .. socket.receive(buffer)];
-        readln(resp);
-        /*
-        socket.send(buffer[0 .. socket.receive(buffer)]);
-        if(resp == "start")
-        {
-            resp = null;
-            writeln("loop do mestre");
-            seila = false;
-            //break;
-            //goto ali;
-            break;
-        }
-        seila = false;*/
-        writeln("loop");
-        break;
-        
-
-    }
-    //auto resp = buffer[0 .. socket.receive(buffer)];
-    //ali:
-    if (!p1.getMaster){
-        char[] pergunta;
-        writeln("loop player");
+    if(p1.getMaster){
         while(true){
-            //readln(resp);
-
-            
-            
-            if(p1.getName()){
-                writeln("Faça uma pergunta ou uma tentativa");
-                
-                readln(pergunta);
-
-                if(pergunta.length > 1){
-                    socket.send(pergunta); 
-                }
-                //socket.send(pergunta);
-            }else{
-                writeln("Ainda não é sua vez");
-            }  
-        }   
+            if(socket.receive(buffer)){
+                socket.receive(buffer);
+                writeln(buffer);
+                writeln("Responda sim ou nao");
+                readln(resposta);
+                socket.send(resposta);
+            }
+        }
     }
     else{
-
-        writeln("loop mestre");
-        char[] pergunto;
-        char[] acn;
-        auto ancora = buffer[0 .. socket.receive(buffer)];
-        while (true){
-            ancora = null;
-            socket.receive(ancora);
-        
-            write(ancora);
-            //auto anc = buffer[0 .. socket.receive(buffer)];
-            writeln("responda sim ou nao.");
-            readln(pergunto);
+        while (true)
+        {
             
-            if(pergunto == "sim"){
-                socket.send("sim");
-            }else{
-                socket.send("nao");
-            }
-
-            while(ancora == acn){
-                socket.receive(acn);
-            }
-            
-
+           
+            writeln("Faça uma pergunta ",p1.getName," :");
+            readln(resposta);
+            socket.send(resposta);
+            socket.receive(bea);
+            writeln(bea);
         }
-        
+    }
 
-        }
     }
 
 

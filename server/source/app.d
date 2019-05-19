@@ -227,10 +227,7 @@ void main()
       connectedClients[id].sendTo(list[id].getName());
       connectedClients[id].receiveFrom(pergunta);
       //connectedClients[mestre].sendTo(pergunta);
-      foreach(clientss ; connectedClients){
-         clientss.sendTo("Pergunta" ~ pergunta ~ "> do player - > "~ list[id].getName() );
-         
-      }
+
       // CHECA SE EH A RESPOSTA CERTA 
       if(game.checkWiner(pergunta) == true)
       {
@@ -257,6 +254,10 @@ void main()
       else {
          id = 1;
       }
+
+      pergunta = new char[200];
+      mestrep = new char[200];
+
    }
    
 

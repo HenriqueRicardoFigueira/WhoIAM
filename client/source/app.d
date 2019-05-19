@@ -86,8 +86,8 @@ bool checaComandos(string palavra)
 
 void manageGame(Socket socket, Player p1)
 {
-    char[1024] buffer;
-    char[1024] bea;
+    char[200] buffer;
+    char[200] bea;
     bool seila = true;
     writeln("player entrou");
     char[] resposta;
@@ -101,8 +101,10 @@ void manageGame(Socket socket, Player p1)
                 socket.receive(resp);
                 writeln(resp);
                 writeln("Responda sim ou nao");
+                resp = new char[200];
                 readln(resposta);
                 socket.send(resposta);
+                resposta = new char[200];
             }
         }
     }
@@ -115,9 +117,13 @@ void manageGame(Socket socket, Player p1)
             writeln("Faça uma pergunta ",p1.getName," :");
             readln(resposta);
             socket.send(resposta);
+            resposta = new char[200];
             if(socket.receive(bea)){
+                
                 socket.receive(bea);
                 writeln(bea);
+
+                bea = new char[200];
             }
         }
     }

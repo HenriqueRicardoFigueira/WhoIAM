@@ -100,7 +100,7 @@ void manageGame(Socket socket, Player p1)
             if(socket.receive(resp)){
                 socket.receive(resp);
                 writeln(resp);
-                writeln("Responda sim ou nao");
+                writeln("Responda sim ou nao: ");
                 resp = new char[200];
                 readln(resposta);
                 socket.send(resposta);
@@ -114,10 +114,13 @@ void manageGame(Socket socket, Player p1)
             
             //resposta = '       ';
             //bea = '      ';
-            writeln("Faça uma pergunta ",p1.getName," :");
+            write("1. Faca uma pergunta ",p1.getName);
+            writeln(" ");
+            write("2.");
             readln(resposta);
             socket.send(resposta);
             resposta = new char[200];
+            bea = new char[200];
             if(socket.receive(bea)){
                 
                 socket.receive(bea);
@@ -146,11 +149,11 @@ void getChat(Socket socket, Player p1){
             auto x = buffer[0 .. socket.receive(buffer)];
             writeln(x);
             if(x == p1.getName()){
-                writeln("Faça uma pergunta ou uma tentativa");
+                writeln("Faca uma pergunta ou uma tentativa");
                 readln(pergunta);
                 socket.send(pergunta);
             }else{
-                writeln("Ainda não é sua vez");
+                writeln("Ainda nao eh sua vez");
             }  
         }
  

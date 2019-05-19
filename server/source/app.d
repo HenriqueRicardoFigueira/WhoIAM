@@ -225,6 +225,7 @@ void main()
    
          // PEDE A PERGUNTA AO PLAYER DA VEZ
       connectedClients[id].sendTo(list[id].getName());
+      pergunta = new char[200];
       connectedClients[id].receiveFrom(pergunta);
       //connectedClients[mestre].sendTo(pergunta);
 
@@ -240,11 +241,12 @@ void main()
       else{
 
          connectedClients[mestre].send(pergunta);
+         mestrep = new char[200];
          connectedClients[mestre].receive(mestrep);
          foreach(clientss ; connectedClients){
             
 
-            clientss.send(">>Pergunta" ~ pergunta ~ ">>Resposta do mestre =  " ~ mestrep );
+            clientss.send("\n>> Pergunta" ~ pergunta ~ "\n >>Resposta do mestre =  " ~ mestrep );
             //clientss.send("Resposta do mestre" ~ mestrep);
          }
       }

@@ -144,6 +144,19 @@ final class Game
    }
 }
 
+Socket addNewPlayer(Socket[] connectedClients,Socket newSocket,Game game){
+   char[1024] buffer;
+
+   newSocket.send("Hello mother fuck!\n"); // say hello
+   //connectedClients ~= newSocket; // add to our list
+   Player p1 = new Player(cast(string)buffer[0 .. newSocket.receive(buffer)]);
+   game.setPlayer(p1);
+   p1.setIp(newSocket.remoteAddress().toAddrString());
+   newSocket.send("Novo player online");
+   
+         
+   return newSocket;
+}
 
 
 void main()
@@ -161,10 +174,12 @@ void main()
    char[200] mestrep;
    int id = 1;
    int mestre = 0;
+   listener:
    while (isRunning)
    {
       readSet.reset();
       readSet.add(listener);
+      
       foreach (client; connectedClients)
          readSet.add(client);
       if (Socket.select(readSet, null, null))
@@ -221,8 +236,10 @@ void main()
       writeln("server");
       writeln(list.length);
       ////////////
-      
-   
+      if(readSet.isSet(listener)){
+         auto newSocket = listener.accept();
+         connectedClients ~= addNewPlayer(connectedClients,newSocket,game);
+      }
          // PEDE A PERGUNTA AO PLAYER DA VEZ
       connectedClients[id].sendTo(list[id].getName());
       pergunta = new char[200];
@@ -241,8 +258,10 @@ void main()
       else{
 
          connectedClients[mestre].send(pergunta);
+         writeln(pergunta);
          mestrep = new char[200];
          connectedClients[mestre].receive(mestrep);
+         writeln(mestrep);
          foreach(clientss ; connectedClients){
             
 

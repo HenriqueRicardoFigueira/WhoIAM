@@ -111,18 +111,20 @@ void manageGame(Socket socket, Player p1)
     else{
         while (true)
         {
-            
-            //resposta = '       ';
-            //bea = '      ';
+            humus:
             write("1. Faca uma pergunta ",p1.getName);
             writeln(" ");
             write("2.");
             readln(resposta);
-            socket.send(resposta);
+            if(resposta.length > 2){
+                socket.send(resposta);
+            }
+            else{
+                goto humus;
+            }
             resposta = new char[200];
             bea = new char[200];
             if(socket.receive(bea)){
-                
                 socket.receive(bea);
                 writeln(bea);
 

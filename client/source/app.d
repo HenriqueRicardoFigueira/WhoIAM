@@ -127,6 +127,7 @@ void waitResp(Socket socket, Player p2, Master master)
     char[] respServer;
     char[] respMestre;
     char[] pergunta;
+    //auto x = buffer[0 .. socket.receive(buffer)];
     while (true)
     {
         auto x = buffer[0 .. socket.receive(buffer)];
@@ -139,6 +140,7 @@ void waitResp(Socket socket, Player p2, Master master)
             {
                 writeln("Você ganhou");
                 p2.setScore();
+                socket.close();
                 break;
             }
             else
@@ -170,7 +172,10 @@ void waitResp(Socket socket, Player p2, Master master)
             }
             writeln("Ainda não é sua vez");
         }
+    buffer.destroy();
     }
+
+
 }
 
 //Master master = new Master();

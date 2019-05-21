@@ -64,7 +64,7 @@ final class Game
    Player[] players;
    string playerDaVez;
    string master;
-   char[] resposta;
+   private char[] xvideos;
 
    this()
    {
@@ -103,12 +103,13 @@ final class Game
 
    char[] getResposta()
    {
-      return resposta;
+      return xvideos;
    }
 
-   void setResposta(char[] resp)
+   void setResposta(char[] joao)
    {
-      this.resposta = resp;
+      writeln("alterei");
+      this.xvideos = joao;
    }
 
    string getPlayersDaVez()
@@ -123,11 +124,13 @@ final class Game
 
    bool checkWiner(char[] dica)
    {
-      char[] resp = getResposta();
-      if (dica == resp)
+       
+      writeln(getResposta());
+      if (dica == getResposta())
       {
          return true;
       }
+      dica.destroy();
       return false;
    }
 
@@ -143,7 +146,11 @@ final class Game
       return id;
    }
 }
-
+void sendToAll(Socket[] socketlist, string message){
+   foreach (clientss; socketlist){
+      clientss.send(message);
+   }
+}
 void main()
 {
 
@@ -217,11 +224,15 @@ void main()
    }
 
    Player[] list = game.getPlayers();
+   char[200] aleatorio;
    while (true)
    {
       connectedClients[id].send(list[id].getName());
       auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
+      //writeln(pergunta);
+      sendToAll(connectedClients,cast(string)kk);
       verifik = game.checkWiner(kk);
+      writeln(verifik);
       if (verifik)
       {
          foreach (clientss; connectedClients)
@@ -236,9 +247,10 @@ void main()
       {
          writeln("xxxx");
          connectedClients[mestre].send("mestre");
-         connectedClients[mestre].receive(mestrep);
-        
+         connectedClients[mestre].receive(aleatorio);
+         sendToAll(connectedClients,cast(string)aleatorio);
       }
+
       if (id < ((connectedClients.length) - 1))
       {
          id++;
@@ -247,6 +259,8 @@ void main()
       {
          id = 1;
       }
+      pergunta.destroy();
+      kk.destroy();
    }
 
 }

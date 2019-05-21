@@ -3,193 +3,201 @@ import std.socket, std.stdio;
 
 final class Player
 {
-	string name;
-	int score;
-	bool master;
+    string name;
+    int score;
+    bool master;
 
-	this(string name)
-	{
-		this.name = name;
+    this(string name)
+    {
+        this.name = name;
         this.score = 0;
-      
-	}
-    
+
+    }
+
     string getName()
     {
         return name;
     }
 
-	void setMaster(bool xxx)
-	{
-		this.master = xxx;
-	}
+    void setMaster(bool xxx)
+    {
+        this.master = xxx;
+    }
 
     bool getMaster()
     {
-        return master;    
+        return master;
     }
 
-	void setScore()
-	{
-		this.score += 10;
-	}
+    void setScore()
+    {
+        this.score += 10;
+    }
 
 }
 
-final class Master{
-    
+final class Master
+{
+
     char[] resposta;
-    
+    Player master;
+
     void setResposta()
     {
         writeln("Você é o Mestre");
         writeln("Digite a resposta certa para o jogo:");
         readln(resposta);
     }
-    
+
     char[] getResposta()
     {
         return resposta;
     }
+
+    void setPlayerMaster(Player p1)
+    {
+        master = p1;
+    }
+
+    Player getPlayerMaster()
+    {
+        return master;
+    }
+
+    void masterResponse(Socket socket)
+    {
+        char[] resp;
+        writeln("Responda Sim ou Nao");
+        readln(resp);
+        socket.send(resp);
+    }
+
 }
 
 bool checaComandos(string palavra)
-	{
-        string[] comandos = ["HELP","RULES", "TALKTOME", "QUIT", "/help", "/quit", "You are"];
+{
+    string[] comandos = ["HELP", "RULES", "TALKTOME", "QUIT", "/help", "/quit", "You are"];
 
+    //string novaparlabra = text(palavra[0 .. tam]);
 
-      //string novaparlabra = text(palavra[0 .. tam]);
-  
-		//função que checa se é uma palavra reservada
-		auto tamo = comandos.length;
-		int i = 0;
-		for (i = 0; i < tamo; i++)
-		{
-			if (comandos[i] == palavra)
-			{
-                if ("HELP" == palavra){
-                    string a = "> Para sair > QUIT | /quit \n> Para saber as regras >  RULES | /rules \n";
-		            writeln(a);
-                    return true;
-                }
-                else if("RULES" == palavra){
-                    string b = "> A regras sao simples: \n> Um fala de cada vez \n> Sempre que um player pergunta, eh vez do mestre responder \n> O mestre soh pode responder 'sim' ou 'nao' \n> Ganha quem acertar primeiro o personagem que o mestre eh \n> O mestre que comanda a sala e avisa quem ganha com o comando (GANHADOR player)";				
-		            writeln(b);
-                    return true;
-                }
-			}
-		}
-		return false;
-	}
+    //função que checa se é uma palavra reservada
+    auto tamo = comandos.length;
+    int i = 0;
+    for (i = 0; i < tamo; i++)
+    {
+        if (comandos[i] == palavra)
+        {
+            if ("HELP" == palavra)
+            {
+                string a = "> Para sair > QUIT | /quit \n> Para saber as regras >  RULES | /rules \n";
+                writeln(a);
+                return true;
+            }
+            else if ("RULES" == palavra)
+            {
+                string b = "> A regras sao simples: \n> Um fala de cada vez \n> Sempre que um player pergunta, eh vez do mestre responder \n> O mestre soh pode responder 'sim' ou 'nao' \n> Ganha quem acertar primeiro o personagem que o mestre eh \n> O mestre que comanda a sala e avisa quem ganha com o comando (GANHADOR player)";
+                writeln(b);
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
-
-
-void manageGame(Socket socket, Player p1)
+void startGame(Socket socket, Player p1, Master master)
 {
     char[1024] buffer;
-    bool seila = true;
-    writeln("player entrou");
-    auto resp = buffer[0 .. socket.receive(buffer)];
-    while(seila)
-    {   
-        writeln("DIGITE: start");
-        //writeln(resp);
-        //resp = buffer[0 .. socket.receive(buffer)];
-        readln(resp);
-        
-        socket.send(buffer[0 .. socket.receive(buffer)]);
-        if(resp == "start")
+    bool control = true;
+
+    while (control)
+    {
+        auto resp = buffer[0 .. socket.receive(buffer)];
+        if (resp == "start")
         {
-            resp = null;
-            writeln("loop do mestre");
-            seila = false;
-            //break;
-            //goto ali;
+            waitResp(socket, p1, master);
+            break;
         }
-        writeln("loop");
-        break;
-
-    }
-    //auto resp = buffer[0 .. socket.receive(buffer)];
-    //ali:
-    if (!p1.getMaster){
-        char[] pergunta;
-
-        while(true){
-            readln(resp);
-            if(resp.length > 1){
-                socket.send(resp); 
-            }
-            
-            resp = buffer[0 .. socket.receive(buffer)];
-            if(p1.getName()){
-                writeln("Faça uma pergunta ou uma tentativa");
-                readln(pergunta);
-                socket.send(pergunta);
-            }else{
-                writeln("Ainda não é sua vez");
-            }  
-        }   
-    }
-    else{
-        char[] pergunta;
-        while (true){
-           write(".");
-        
-        }
-        
-
-        }
-    }
-
-
-
-void getChat(Socket socket, Player p1){
-    char[1024] buffer;
-    char[1024] tempbuffer;
-    writeln("Aaaa getchat");
-    char[] pergunta;
-    tempbuffer = buffer[0 .. socket.receive(buffer)];
-
-    while(true){
-
-        if (tempbuffer != buffer){
-            tempbuffer = buffer[0 .. socket.receive(buffer)];
-            auto x = buffer[0 .. socket.receive(buffer)];
-            writeln(x);
-            if(x == p1.getName()){
-                writeln("Faça uma pergunta ou uma tentativa");
-                readln(pergunta);
-                socket.send(pergunta);
-            }else{
-                writeln("Ainda não é sua vez");
-            }  
-        }
- 
     }
 }
 
-void main() {
-    char[] name;
-    auto socket = new Socket(AddressFamily.INET,  SocketType.STREAM);
+void waitResp(Socket socket, Player p2, Master master)
+{
+
     char[1024] buffer;
-    Master master = new Master;
+    char[] respServer;
+    char[] respMestre;
+    char[] pergunta;
+    while (true)
+    {
+        auto x = buffer[0 .. socket.receive(buffer)];
+        if (x == p2.getName())
+        {
+            writeln("Faça uma pergunta ou uma tentativa");
+            readln(pergunta);
+            socket.send(pergunta);
+            if ((buffer[0 .. socket.receive(buffer)]) == "ganhou")
+            {
+                writeln("Você ganhou");
+                p2.setScore();
+                break;
+            }
+            else
+            {
+                writeln("você perdeu a vez");
+
+            }
+        }
+        else if ((x == "mestre") && (p2.getMaster()))
+        {
+            writeln(x);
+            if(x == null)
+            {
+                writeln("Player acertou");
+                socket.close();
+                break;
+            }
+            master.masterResponse(socket);
+
+        }
+        else
+        {
+            //writeln(respServer[0 .. socket.receive(respServer)]);
+            if (x == null)
+            {
+                writeln("Você perdeu");
+                socket.close();
+                break;
+            }
+            writeln("Ainda não é sua vez");
+        }
+    }
+}
+
+//Master master = new Master();
+void main()
+{
+    char[] name;
+    auto socket = new Socket(AddressFamily.INET, SocketType.STREAM);
+    char[1024] buffer;
     socket.connect(new InternetAddress("localhost", 8080));
     auto received = socket.receive(buffer); // wait for the server to say hello
     writeln("Server said: ", buffer[0 .. received]);
     writeln("Digite seu nick: ");
     readln(name);
     socket.send(name);
-    Player player = new Player(cast(string)name);
+    Master master = new Master;
+    Player player = new Player(cast(string) name);
     auto resp = buffer[0 .. socket.receive(buffer)];
-    if(resp == "true")
+    if (resp == "true")
     {
         player.setMaster(true);
         master.setResposta();
+        master.setPlayerMaster(player);
         socket.send(master.getResposta());
-        manageGame(socket, player);    
-    }    
-    else{
-        manageGame(socket, player);
+        startGame(socket, player, master);
+    }
+    else
+    {
+        startGame(socket, player, master);
     }
 }

@@ -51,7 +51,7 @@ final class Player
    {
       return ip;
    }
-   
+
    void setIp(string ip)
    {
       this.ip = ip;
@@ -124,7 +124,7 @@ final class Game
    bool checkWiner(char[] dica)
    {
       char[] resp = getResposta();
-      if(dica == resp)
+      if (dica == resp)
       {
          return true;
       }
@@ -134,17 +134,15 @@ final class Game
    int returnId(string name)
    {
       int id = 0;
-      foreach(Player p1 ; players)
+      foreach (Player p1; players)
       {
-         if(name == p1.name)
+         if (name == p1.name)
             break;
          id++;
       }
       return id;
    }
 }
-
-
 
 void main()
 {
@@ -159,6 +157,7 @@ void main()
    Game game = new Game();
    char[200] pergunta;
    char[200] mestrep;
+   bool verifik = false;
    int id = 1;
    int mestre = 0;
    while (isRunning)
@@ -185,8 +184,8 @@ void main()
             auto newSocket = listener.accept();
             newSocket.send("Hello mother fuck!\n"); // say hello
             connectedClients ~= newSocket; // add to our list
-           
-            Player p1 = new Player(cast(string)buffer[0 .. newSocket.receive(buffer)]);
+
+            Player p1 = new Player(cast(string) buffer[0 .. newSocket.receive(buffer)]);
             if (connectedClients.length == 1)
             {
                p1.setMaster(true);
@@ -194,18 +193,20 @@ void main()
                game.setPlayer(p1);
                game.setMaster(p1.getName());
                newSocket.send("true");
-               game.setResposta(buffer[0 .. newSocket.receive(buffer)]);
+               auto x = mestrep[0 .. newSocket.receive(mestrep)];
+               game.setResposta(x);
+               writeln("resposta do mano");
                writeln(game.getResposta());
             }
-            else{
+            else
+            {
                game.setPlayer(p1);
                p1.setIp(newSocket.remoteAddress().toAddrString());
                newSocket.send("Aguardando Jogadores");
-               if(connectedClients.length >= 2)
+               if (connectedClients.length >= 2)
                {
-                  //newSocket.send("2 Jogadores entraram");
-                  foreach(clientss ; connectedClients){
-                     newSocket.send("start");
+                  foreach (clientss; connectedClients)
+                  {
                      clientss.send("start");
                   }
                   break;
@@ -214,29 +215,38 @@ void main()
          }
       }
    }
+
    Player[] list = game.getPlayers();
-   while(true)
+   while (true)
    {
-      writeln("server");
-      writeln(id);
       connectedClients[id].send(list[id].getName());
-      connectedClients[id].receive(pergunta);
-      if(game.checkWiner(pergunta) == true)
+      auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
+      verifik = game.checkWiner(kk);
+      if (verifik)
       {
-         connectedClients[id].send(list[id].getName() ~ "ganhou");
+         foreach (clientss; connectedClients)
+         {
+            clientss.send("ganhou");
+            clientss.close();
+         }
+         listener.close();
          break;
       }
-      else{
-         connectedClients[mestre].send(list[mestre].getName);
+      else
+      {
+         writeln("xxxx");
+         connectedClients[mestre].send("mestre");
          connectedClients[mestre].receive(mestrep);
+        
       }
-      if(id < ((connectedClients.length)-1)) {
+      if (id < ((connectedClients.length) - 1))
+      {
          id++;
       }
-      else {
+      else
+      {
          id = 1;
-      } 
+      }
    }
-   
 
 }

@@ -68,10 +68,19 @@ final class Master
 
     void masterResponse(Socket socket)
     {
-        char[] resp;
+        char[] x;
+        faca:
         writeln("Responda Sim ou Nao");
-        readln(resp);
-        socket.send(resp);
+        readln(x);
+        char[] resp = x[0 ..  x.length-1];
+        if((resp == "sim") || (resp == "SIM") || (resp == "não") || (resp == "NÃO") || (resp == "nao") || (resp == "NAO"))
+        {        
+            socket.send(resp);
+            return;
+        }
+        else{
+            goto faca;
+        }
     }
 
 }
@@ -137,12 +146,15 @@ void waitResp(Socket socket, Player p2, Master master)
         {
             writeln("Faca uma pergunta ou uma tentativa");
             readln(pergunta);
+
+            
             socket.send(pergunta);
             writefln(buffer[0 .. socket.receive(buffer)]);
             if ((buffer[0 .. socket.receive(buffer)]) == "3")
             {
                 writeln("Voce ganhou");
                 p2.setScore();
+                
                 socket.close();
                 return;
             }
@@ -192,9 +204,16 @@ void main()
     socket.connect(new InternetAddress("localhost", 8080));
     auto received = socket.receive(buffer); // wait for the server to say hello
     writeln("Server said: ", buffer[0 .. received]);
+    nick:
     writeln("Digite seu nick: ");
     readln(name);
-    socket.send(name);
+    if(name.length >= 2)
+        socket.send(name);
+    else{
+        writeln("nome invalido");
+        goto nick;
+    }
+
     Master master = new Master;
     Player player = new Player(cast(string) name);
     auto resp = buffer[0 .. socket.receive(buffer)];

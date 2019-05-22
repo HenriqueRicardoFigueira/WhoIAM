@@ -1,0 +1,19 @@
+Jogo Inicializado!
+Resposta do jogo = carlos
+
+mestre = henri
+DESKTOP-AGDBTUN
+
+player = higor
+DESKTOP-AGDBTUN
+
+player = sheldon
+DESKTOP-AGDBTUN
+
+----------------------------------
+------Partida Comecou!------------
+----------------------------------
+Pergunta num = 1
+DESKTOP-AGDBTUN
+carlos
+

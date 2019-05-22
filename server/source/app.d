@@ -1,6 +1,10 @@
 module app;
 import std.socket;
 import std.stdio;
+import std.container;
+import std.string;
+import std.file;
+
 
 final class Player
 {
@@ -8,28 +12,16 @@ final class Player
    string ip;
    int score;
    bool master;
-   bool token;
 
    this(string name)
    {
       this.name = name;
       this.score = 0;
-      this.token = false;
    }
 
    string getName()
    {
       return name;
-   }
-
-   void setToken(bool tok)
-   {
-      this.token = tok;
-   }
-
-   bool getToken()
-   {
-      return token;
    }
 
    void setMaster(bool xxx)
@@ -61,10 +53,8 @@ final class Player
 final class Game
 {
    int rodada;
-   Player[] players;
-   string playerDaVez;
    string master;
-   private char[] xvideos;
+   private char[] resposta;
 
    this()
    {
@@ -81,16 +71,6 @@ final class Game
       this.rodada += 1;
    }
 
-   Player[] getPlayers()
-   {
-      return players;
-   }
-
-   void setPlayer(Player id)
-   {
-      this.players ~= id;
-   }
-
    string getMaster()
    {
       return master;
@@ -103,30 +83,19 @@ final class Game
 
    char[] getResposta()
    {
-      return xvideos;
+      return resposta;
    }
 
-   void setResposta(char[] joao)
+   void setResposta(char[] resp)
    {
-      writeln("alterei");
-      this.xvideos = joao;
-   }
-
-   string getPlayersDaVez()
-   {
-      return playerDaVez;
-   }
-
-   void setPlayerDaVez(string name)
-   {
-      this.playerDaVez = name;
+      this.resposta = resp;
    }
 
    bool checkWiner(char[] dica)
    {
-       
-      writeln(getResposta());
-      if (dica == getResposta())
+      string s = cast(string)dica;
+      string resp = cast(string)getResposta();
+      if ((s == resp) || (s == toUpper(resp)))
       {
          return true;
       }
@@ -134,18 +103,8 @@ final class Game
       return false;
    }
 
-   int returnId(string name)
-   {
-      int id = 0;
-      foreach (Player p1; players)
-      {
-         if (name == p1.name)
-            break;
-         id++;
-      }
-      return id;
-   }
 }
+
 void sendToAll(Socket[] socketlist, string message, int id){
    int cont = 0;
    foreach (clientss; socketlist)
@@ -155,11 +114,25 @@ void sendToAll(Socket[] socketlist, string message, int id){
       cont ++;
    }
 }
+
+
 void sendToAll(Socket[] socketlist, string message){
    foreach (clientss; socketlist)
    {
       clientss.send(message);
    }
+}
+
+
+
+
+
+void gravaPT(string message){
+   
+   File file = File("score.txt", "w+");
+   file.writeln(message);
+   file.close();
+   
 }
 void main()
 {
@@ -174,10 +147,13 @@ void main()
    Game game = new Game();
    char[200] pergunta;
    char[200] mestrep;
-   
+   Array!Player players;
    int id = 1;
    int mestre = 0;
-   string[] listaTeste = ["joao", "higor", "henri"];
+   string messageToWrite;
+   int msgindex = 0; 
+   File file = File("score.txt", "w+");
+   file.writeln("Jogo Inicializado!");
    while (isRunning)
    {
       readSet.reset();
@@ -197,30 +173,39 @@ void main()
             }*/
          if (readSet.isSet(listener))
          {
-            // the listener is ready to read, that means
-            // a new client wants to connect. We accept it here.
+           
             auto newSocket = listener.accept();
-            newSocket.send("Hello mother fuck!\n"); // say hello
-            connectedClients ~= newSocket; // add to our list
+            newSocket.send("Bem vindo ao jogo Who Im !\nAguardando Players...");
+            connectedClients ~= newSocket; 
 
             Player p1 = new Player(cast(string) buffer[0 .. newSocket.receive(buffer)]);
             if (connectedClients.length == 1)
             {
                p1.setMaster(true);
                p1.setIp(newSocket.remoteAddress().toAddrString());
-               //game.setPlayer(p1);
                game.setMaster(p1.getName());
                newSocket.send("true");
                auto x = mestrep[0 .. newSocket.receive(mestrep)];
                game.setResposta(x);
                writeln("resposta do mano");
                writeln(game.getResposta());
+               file.write("Resposta do jogo = ");
+               file.writeln(game.getResposta());
+               file.write("mestre = ");
+               file.write(p1.name);
+               file.writeln(connectedClients[0].hostName());
+               file.writeln();
+               msgindex ++;
             }
             else
             {
-               //game.setPlayer(p1);
                p1.setIp(newSocket.remoteAddress().toAddrString());
                newSocket.send("Aguardando Jogadores");
+               file.write("player = ");
+               file.write(p1.name);
+               file.writeln(connectedClients[msgindex].hostName());
+               file.writeln();
+               msgindex++;
                if (connectedClients.length >= 3)
                {
                   foreach (clientss; connectedClients)
@@ -234,30 +219,36 @@ void main()
       }
    }
 
-   //Player[] list = game.getPlayers();
-
-
-   //loopeterno(connectedClients,game,)
+  
    char[200] aleatorio;
    bool verifik = false;
+   file.writeln("----------------------------------");
+   file.writeln("------Partida Comecou!------------");
+   file.writeln("----------------------------------");
+   msgindex = 1;
    while (true)
    {
-      //Socket.select(null,readSet,null,50);
+
       connectedClients[id].send("1");
       auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
-      //writeln(pergunta);
+      file.write("Pergunta num = ");
+      file.writeln(msgindex);
+      msgindex++;
       sendToAll(connectedClients,cast(string)kk);//ENVIA A PERGUNTA PRA TODOS
-      //connectedClients[mestre].send(kk);
-      //sendToAll(connectedClients,cast(string)kk);
+      file.writeln(connectedClients[id].hostName());
+      file.writeln(kk);
       verifik = game.checkWiner(kk);
       writeln(verifik);
+      
       if (verifik)
       {
+        
          foreach (clientss; connectedClients)
          {
             clientss.send("3");
             clientss.close();
          }
+
          listener.close();
          break;
       }
@@ -266,8 +257,11 @@ void main()
          writeln("xxxx");
          connectedClients[mestre].send("0");
          connectedClients[mestre].receive(aleatorio);
+         file.write("Resposta do Mestre = ");
+         file.writeln(cast(string)aleatorio[0 .. 3]);
          sendToAll(connectedClients,cast(string)aleatorio);
       }
+
       if (id < ((connectedClients.length) - 1))
       {
          id++;
@@ -277,9 +271,7 @@ void main()
          id = 1;
       }
       pergunta.destroy();
-      kk.destroy();
-      
-
-      
+      kk.destroy();  
    }
+   file.close();
 }

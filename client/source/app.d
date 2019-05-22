@@ -1,5 +1,7 @@
 module app;
-import std.socket, std.stdio;
+import std.socket;
+import std.stdio;
+
 
 final class Player
 {
@@ -146,6 +148,7 @@ void waitResp(Socket socket, Player p2, Master master)
             }
             else
             {
+                writeln(buffer);
                 writeln("voce perdeu a vez");
 
             }
@@ -164,20 +167,17 @@ void waitResp(Socket socket, Player p2, Master master)
 
         }
         
-        else
+        else if (x == null)
         {
-           
-            if (x == null)
-            {
                 writeln("Voce perdeu");
                 socket.close();
                 return;
-            }
-            writeln("Ainda nao eh sua vez");
-            //socket.receive(respMestre);
-            //writeln(respMestre);
         }
-    buffer.destroy();
+        else{
+            writeln(x);
+        }
+
+        buffer.destroy();
     }
 
 

@@ -236,6 +236,7 @@ void main()
       connectedClients[id].send("1");
       auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
       //writeln(pergunta);
+      //sendToAll(connectedClients,"2");
       connectedClients[mestre].send(kk);
       //sendToAll(connectedClients,cast(string)kk);
       verifik = game.checkWiner(kk);

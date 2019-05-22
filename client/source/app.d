@@ -138,8 +138,8 @@ void waitResp(Socket socket, Player p2, Master master)
             writeln("Faca uma pergunta ou uma tentativa");
             readln(pergunta);
             socket.send(pergunta);
-            //writefln(buffer[0 .. socket.receive(buffer)]);
-            if ((buffer[0 .. socket.receive(buffer)]) == "ganhou")
+            writefln(buffer[0 .. socket.receive(buffer)]);
+            if ((buffer[0 .. socket.receive(buffer)]) == "3")
             {
                 writeln("Voce ganhou");
                 p2.setScore();
@@ -173,10 +173,10 @@ void waitResp(Socket socket, Player p2, Master master)
                 socket.close();
                 return;
         }
-        else{
+        else if(x != "3"){
             writeln(x);
         }
-
+        
         buffer.destroy();
     }
 

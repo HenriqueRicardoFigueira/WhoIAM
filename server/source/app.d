@@ -146,8 +146,18 @@ final class Game
       return id;
    }
 }
+void sendToAll(Socket[] socketlist, string message, int id){
+   int cont = 0;
+   foreach (clientss; socketlist)
+   {
+      if(id != cont)
+         clientss.send(message);
+      cont ++;
+   }
+}
 void sendToAll(Socket[] socketlist, string message){
-   foreach (clientss; socketlist){
+   foreach (clientss; socketlist)
+   {
       clientss.send(message);
    }
 }
@@ -236,8 +246,8 @@ void main()
       connectedClients[id].send("1");
       auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
       //writeln(pergunta);
-      //sendToAll(connectedClients,"2");
-      connectedClients[mestre].send(kk);
+      sendToAll(connectedClients,cast(string)kk);//ENVIA A PERGUNTA PRA TODOS
+      //connectedClients[mestre].send(kk);
       //sendToAll(connectedClients,cast(string)kk);
       verifik = game.checkWiner(kk);
       writeln(verifik);
@@ -245,7 +255,7 @@ void main()
       {
          foreach (clientss; connectedClients)
          {
-            clientss.send("ganhou");
+            clientss.send("3");
             clientss.close();
          }
          listener.close();

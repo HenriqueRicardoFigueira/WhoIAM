@@ -114,10 +114,10 @@ void startGame(Socket socket, Player p1, Master master)
         auto resp = buffer[0 .. socket.receive(buffer)];
         if (resp == "start")
         {
-            waitResp(socket, p1, master);
             break;
         }
     }
+    waitResp(socket, p1, master);
 }
 
 void waitResp(Socket socket, Player p2, Master master)
@@ -130,19 +130,19 @@ void waitResp(Socket socket, Player p2, Master master)
     //auto x = buffer[0 .. socket.receive(buffer)];
     while (true)
     {
-        auto x = buffer[0 .. socket.receive(buffer)];
-        //writeln(x); 
+        auto x = buffer[0 .. socket.receive(buffer)]; 
         if (x == "1")
         {
             writeln("Faca uma pergunta ou uma tentativa");
             readln(pergunta);
             socket.send(pergunta);
+            //writefln(buffer[0 .. socket.receive(buffer)]);
             if ((buffer[0 .. socket.receive(buffer)]) == "ganhou")
             {
                 writeln("Voce ganhou");
                 p2.setScore();
                 socket.close();
-                break;
+                return;
             }
             else
             {
@@ -152,13 +152,12 @@ void waitResp(Socket socket, Player p2, Master master)
         }
 
         else if ((x == "0") && (p2.getMaster()))
-        {
-            //writeln(x);
+        {   
             if(x == null)
             {
                 writeln("Player acertou");
                 socket.close();
-                break;
+                return;
             }
             
             master.masterResponse(socket);
@@ -167,12 +166,12 @@ void waitResp(Socket socket, Player p2, Master master)
         
         else
         {
-            
+           
             if (x == null)
             {
                 writeln("Voce perdeu");
                 socket.close();
-                break;
+                return;
             }
             writeln("Ainda nao eh sua vez");
             //socket.receive(respMestre);

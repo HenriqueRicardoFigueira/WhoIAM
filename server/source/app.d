@@ -164,7 +164,7 @@ void main()
    Game game = new Game();
    char[200] pergunta;
    char[200] mestrep;
-   bool verifik = false;
+   
    int id = 1;
    int mestre = 0;
    string[] listaTeste = ["joao", "higor", "henri"];
@@ -225,9 +225,14 @@ void main()
    }
 
    //Player[] list = game.getPlayers();
+
+
+   //loopeterno(connectedClients,game,)
    char[200] aleatorio;
+   bool verifik = false;
    while (true)
    {
+      //Socket.select(null,readSet,null,50);
       connectedClients[id].send("1");
       auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
       //writeln(pergunta);
@@ -249,11 +254,9 @@ void main()
       {
          writeln("xxxx");
          connectedClients[mestre].send("0");
-
          connectedClients[mestre].receive(aleatorio);
          sendToAll(connectedClients,cast(string)aleatorio);
       }
-
       if (id < ((connectedClients.length) - 1))
       {
          id++;
@@ -264,6 +267,8 @@ void main()
       }
       pergunta.destroy();
       kk.destroy();
-   }
+      
 
+      
+   }
 }

@@ -167,6 +167,7 @@ void main()
    bool verifik = false;
    int id = 1;
    int mestre = 0;
+   string[] listaTeste = ["joao", "higor", "henri"];
    while (isRunning)
    {
       readSet.reset();
@@ -197,7 +198,7 @@ void main()
             {
                p1.setMaster(true);
                p1.setIp(newSocket.remoteAddress().toAddrString());
-               game.setPlayer(p1);
+               //game.setPlayer(p1);
                game.setMaster(p1.getName());
                newSocket.send("true");
                auto x = mestrep[0 .. newSocket.receive(mestrep)];
@@ -207,10 +208,10 @@ void main()
             }
             else
             {
-               game.setPlayer(p1);
+               //game.setPlayer(p1);
                p1.setIp(newSocket.remoteAddress().toAddrString());
                newSocket.send("Aguardando Jogadores");
-               if (connectedClients.length >= 2)
+               if (connectedClients.length >= 3)
                {
                   foreach (clientss; connectedClients)
                   {
@@ -223,14 +224,15 @@ void main()
       }
    }
 
-   Player[] list = game.getPlayers();
+   //Player[] list = game.getPlayers();
    char[200] aleatorio;
    while (true)
    {
-      connectedClients[id].send(list[id].getName());
+      connectedClients[id].send("1");
       auto kk = pergunta[0 .. connectedClients[id].receive(pergunta)];
       //writeln(pergunta);
-      sendToAll(connectedClients,cast(string)kk);
+      connectedClients[mestre].send(kk);
+      //sendToAll(connectedClients,cast(string)kk);
       verifik = game.checkWiner(kk);
       writeln(verifik);
       if (verifik)
@@ -246,7 +248,8 @@ void main()
       else
       {
          writeln("xxxx");
-         connectedClients[mestre].send("mestre");
+         connectedClients[mestre].send("0");
+
          connectedClients[mestre].receive(aleatorio);
          sendToAll(connectedClients,cast(string)aleatorio);
       }

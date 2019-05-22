@@ -44,7 +44,7 @@ final class Master
 
     void setResposta()
     {
-        writeln("Você é o Mestre");
+        writeln("Voce eh o Mestre");
         writeln("Digite a resposta certa para o jogo:");
         readln(resposta);
     }
@@ -80,7 +80,7 @@ bool checaComandos(string palavra)
 
     //string novaparlabra = text(palavra[0 .. tam]);
 
-    //função que checa se é uma palavra reservada
+    //funcao que checa se eh uma palavra reservada
     auto tamo = comandos.length;
     int i = 0;
     for (i = 0; i < tamo; i++)
@@ -123,54 +123,60 @@ void startGame(Socket socket, Player p1, Master master)
 void waitResp(Socket socket, Player p2, Master master)
 {
 
-    char[1024] buffer;
+    char[50] buffer;
     char[] respServer;
-    char[] respMestre;
+    char[50] respMestre;
     char[] pergunta;
     //auto x = buffer[0 .. socket.receive(buffer)];
     while (true)
     {
         auto x = buffer[0 .. socket.receive(buffer)];
-        if (x == p2.getName())
+        //writeln(x); 
+        if (x == "1")
         {
-            writeln("Faça uma pergunta ou uma tentativa");
+            writeln("Faca uma pergunta ou uma tentativa");
             readln(pergunta);
             socket.send(pergunta);
             if ((buffer[0 .. socket.receive(buffer)]) == "ganhou")
             {
-                writeln("Você ganhou");
+                writeln("Voce ganhou");
                 p2.setScore();
                 socket.close();
                 break;
             }
             else
             {
-                writeln("você perdeu a vez");
+                writeln("voce perdeu a vez");
 
             }
         }
-        else if ((x == "mestre") && (p2.getMaster()))
+
+        else if ((x == "0") && (p2.getMaster()))
         {
-            writeln(x);
+            //writeln(x);
             if(x == null)
             {
                 writeln("Player acertou");
                 socket.close();
                 break;
             }
+            
             master.masterResponse(socket);
 
         }
+        
         else
         {
-            //writeln(respServer[0 .. socket.receive(respServer)]);
+            
             if (x == null)
             {
-                writeln("Você perdeu");
+                writeln("Voce perdeu");
                 socket.close();
                 break;
             }
-            writeln("Ainda não é sua vez");
+            writeln("Ainda nao eh sua vez");
+            //socket.receive(respMestre);
+            //writeln(respMestre);
         }
     buffer.destroy();
     }
